@@ -576,6 +576,11 @@
         max-width: 100%;
         padding: 0 10px;
         transform: none;
+        margin: 0 auto;
+      }
+
+      .result-container {
+        padding: 15px 0;
       }
       
       .main-heading {
@@ -628,14 +633,51 @@
 
       .contact-form {
         padding: 20px;
+        margin-top: 20px;
+      }
+
+      .contact-form h3 {
+        font-size: 20px;
+        margin-bottom: 16px;
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      .form-group label {
+        font-size: 13px;
+        margin-bottom: 6px;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        padding: 12px 16px;
+        font-size: 14px;
+        border-radius: 8px;
       }
 
       .upload-area {
         padding: 20px;
       }
 
+      .upload-text {
+        font-size: 14px;
+      }
+
+      .upload-subtext {
+        font-size: 12px;
+      }
+
+      .submit-btn {
+        padding: 14px 24px;
+        font-size: 14px;
+        margin-top: 20px;
+      }
+
       .recaptcha-container {
         padding: 15px;
+        margin: 20px 0;
       }
 
       .g-recaptcha {
@@ -644,8 +686,23 @@
     }
 
     @media (max-width: 480px) {
+      body {
+        padding: 5px;
+        font-size: 14px;
+      }
+
+      .flight-form {
+        padding: 0 5px;
+      }
+
       .main-heading {
         font-size: 18px;
+        margin-bottom: 16px;
+      }
+
+      .subtext {
+        font-size: 13px;
+        margin-bottom: 16px;
       }
       
       .flight-problem-label {
@@ -658,7 +715,63 @@
       }
 
       .progress-container {
-        margin-bottom: 24px;
+        margin-bottom: 20px;
+      }
+
+      .top-bar-text {
+        font-size: 14px;
+      }
+
+      .contact-form {
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 12px;
+      }
+
+      .contact-form h3 {
+        font-size: 18px;
+        margin-bottom: 15px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        font-size: 12px;
+        margin-bottom: 5px;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        padding: 10px 14px;
+        font-size: 14px;
+        border-radius: 8px;
+      }
+
+      .form-group textarea {
+        min-height: 80px;
+      }
+
+      .upload-area {
+        padding: 15px;
+        border-radius: 8px;
+      }
+
+      .upload-text {
+        font-size: 13px;
+        margin-bottom: 4px;
+      }
+
+      .upload-subtext {
+        font-size: 11px;
+      }
+
+      .submit-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+        margin-top: 16px;
+        border-radius: 8px;
       }
 
       .g-recaptcha {
@@ -666,8 +779,62 @@
       }
 
       .recaptcha-container {
-        padding: 10px;
-        margin: 16px 0;
+        padding: 8px;
+        margin: 15px 0;
+        border-radius: 8px;
+      }
+
+      .result-title {
+        font-size: 20px;
+      }
+
+      .result-message {
+        font-size: 14px;
+        line-height: 1.5;
+      }
+    }
+
+    /* Extra small screens */
+    @media (max-width: 360px) {
+      .contact-form {
+        padding: 12px;
+        margin-top: 12px;
+      }
+
+      .contact-form h3 {
+        font-size: 16px;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+
+      .upload-area {
+        padding: 12px;
+      }
+
+      .submit-btn {
+        padding: 10px 16px;
+        font-size: 13px;
+      }
+
+      .g-recaptcha {
+        transform: scale(0.75);
+      }
+
+      .recaptcha-container {
+        padding: 5px;
+        margin: 12px 0;
+      }
+
+      .main-heading {
+        font-size: 16px;
+      }
+
+      .result-title {
+        font-size: 18px;
       }
     }
   </style>
