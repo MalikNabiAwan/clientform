@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Spam E-Mail Bewertungsformular</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
@@ -13,6 +13,9 @@
       margin: 0;
       padding: 20px;
       font-size: 18px;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-x: hidden;
     }
 
     .flight-form {
@@ -20,6 +23,8 @@
       margin: 0 auto;
       transform: scale(1.15);
       transform-origin: top center;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .top-bar {
@@ -572,15 +577,28 @@
 
     /* Responsive Design */
     @media (max-width: 768px) {
+      body {
+        overflow-x: hidden;
+      }
+
       .flight-form {
         max-width: 100%;
-        padding: 0 10px;
+        padding: 0 8px;
         transform: none;
         margin: 0 auto;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .result-container {
         padding: 15px 0;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .result-message {
+        margin-bottom: 20px;
+        padding: 0 5px;
       }
       
       .main-heading {
@@ -632,13 +650,20 @@
       }
 
       .contact-form {
-        padding: 20px;
-        margin-top: 20px;
+        padding: 16px;
+        margin-top: 16px;
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        box-sizing: border-box;
+        border-radius: 12px;
+        max-width: 100%;
       }
 
       .contact-form h3 {
         font-size: 20px;
         margin-bottom: 16px;
+        text-align: center;
       }
 
       .form-group {
@@ -687,12 +712,17 @@
 
     @media (max-width: 480px) {
       body {
-        padding: 5px;
+        padding: 3px;
         font-size: 14px;
+        margin: 0;
+        overflow-x: hidden;
       }
 
       .flight-form {
-        padding: 0 5px;
+        padding: 0 3px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
       }
 
       .main-heading {
@@ -723,14 +753,20 @@
       }
 
       .contact-form {
-        padding: 15px;
-        margin-top: 15px;
-        border-radius: 12px;
+        padding: 12px;
+        margin-top: 12px;
+        margin-left: 0;
+        margin-right: 0;
+        border-radius: 8px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
       }
 
       .contact-form h3 {
         font-size: 18px;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
+        text-align: center;
       }
 
       .form-group {
@@ -796,13 +832,31 @@
 
     /* Extra small screens */
     @media (max-width: 360px) {
+      body {
+        padding: 2px;
+        margin: 0;
+      }
+
+      .flight-form {
+        padding: 0 2px;
+        width: 100%;
+        max-width: 100%;
+      }
+
       .contact-form {
-        padding: 12px;
-        margin-top: 12px;
+        padding: 10px;
+        margin-top: 10px;
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        border-radius: 6px;
       }
 
       .contact-form h3 {
         font-size: 16px;
+        margin-bottom: 10px;
       }
 
       .form-group input,
@@ -835,6 +889,20 @@
 
       .result-title {
         font-size: 18px;
+        margin-bottom: 15px;
+      }
+
+      .result-message {
+        font-size: 13px;
+        line-height: 1.4;
+        margin-bottom: 15px;
+        padding: 0 2px;
+      }
+
+      .result-container {
+        padding: 10px 0;
+        width: 100%;
+        box-sizing: border-box;
       }
     }
   </style>
@@ -1561,17 +1629,5 @@
             document.getElementById('fileUpload').dispatchEvent(event);
         });
     </script>
-  <script>
-  function sendHeight() {
-    const height = document.documentElement.scrollHeight;
-    parent.postMessage({ type: 'setHeight', height: height }, '*');
-  }
-
-  window.addEventListener('load', sendHeight);
-  window.addEventListener('resize', sendHeight);
-
-  // If your form content changes dynamically (expand/collapse), call sendHeight() accordingly
-</script>
-
 </body>
 </html>
