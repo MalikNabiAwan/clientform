@@ -1561,5 +1561,17 @@
             document.getElementById('fileUpload').dispatchEvent(event);
         });
     </script>
+  <script>
+  function sendHeight() {
+    const height = document.documentElement.scrollHeight;
+    parent.postMessage({ type: 'setHeight', height: height }, '*');
+  }
+
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+
+  // If your form content changes dynamically (expand/collapse), call sendHeight() accordingly
+</script>
+
 </body>
 </html>
