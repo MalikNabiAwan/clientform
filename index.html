@@ -142,6 +142,13 @@
       transition: width 0.6s ease;
       width: 0%;
     }
+    
+    /* Mobile: Faster progress animation */
+    @media (max-width: 768px) {
+      .progress-line-fill {
+        transition: width 0.3s ease;
+      }
+    }
 
     .main-heading {
       font-family: 'Poppins', sans-serif;
@@ -666,11 +673,44 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Responsive Design */
+    /* Mobile Performance Optimizations */
     @media (max-width: 768px) {
+      * {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+      }
+      
       body {
         overflow-x: hidden;
         padding: 20px 16px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      
+      /* First Question Specific Optimizations */
+      #question1 .flight-problem-label {
+        transition: border-color 0.15s ease;
+        transform: none;
+        will-change: border-color;
+      }
+      
+      #question1 .flight-problem-label:hover {
+        transform: none;
+        box-shadow: none;
+        background: #f8f9fb;
+      }
+      
+      #question1 .flight-problem-label:active {
+        transform: none;
+        transition: none;
+      }
+      
+      /* Optimize radio button rendering */
+      #question1 input[type="radio"] {
+        transition: background-color 0.2s ease;
+        will-change: background-color;
       }
 
       .flight-form {
@@ -828,11 +868,16 @@
     }
 
     @media (max-width: 480px) {
+      * {
+        transition-duration: 0.2s;
+      }
+      
       body {
         padding: 16px 12px;
         font-size: 14px;
         margin: 0;
         overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
       }
 
       .flight-form {
@@ -855,6 +900,40 @@
       .flight-problem-label {
         padding: 8px 16px;
         font-size: 14px;
+        transition: none;
+        transform: none;
+      }
+      
+      .flight-problem-label:hover {
+        transform: none;
+        transition: border-color 0.2s ease;
+      }
+      
+      /* First Question Mobile Optimizations */
+      #question1 .flight-problem-label {
+        transition: none;
+        transform: none;
+        will-change: auto;
+      }
+      
+      #question1 .flight-problem-label:hover,
+      #question1 .flight-problem-label:active {
+        transform: none;
+        box-shadow: none;
+        transition: border-color 0.1s ease;
+      }
+      
+      .question-container {
+        animation: none;
+      }
+      
+      .question-container.active {
+        animation: mobileFadeIn 0.3s ease-out;
+      }
+      
+      @keyframes mobileFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
 
       .step-label {
@@ -1410,17 +1489,12 @@
         <input type="hidden" name="Timestamp" id="hiddenTimestamp">
         <input type="hidden" name="Column 6" id="hiddenAssessment">
         
-        <!-- reCAPTCHA -->
-        <div class="recaptcha-container">
-          <div class="g-recaptcha" data-sitekey="6LcV1KArAAAAAOXS9H0f8DZqiJQQNdz-cc_hVmci" data-callback="onRecaptchaSuccess" data-expired-callback="onRecaptchaExpired"></div>
-        </div>
-        
         <!-- Terms and Conditions Checkboxes -->
         <div class="checkbox-container">
           <div class="checkbox-item">
             <input type="checkbox" id="termsCheckbox" name="terms" required>
             <label for="termsCheckbox" class="checkbox-label">
-              Hiermit akzeptiere ich die AGB und Datenschutzerklärung<span class="checkbox-required">*</span>
+              Hiermit akzeptiere ich die <a href="https://v2.wirkaufendeinemail.de/agb" target="_blank" style="color: #1D345D; text-decoration: underline;">AGB</a> und <a href="https://v2.wirkaufendeinemail.de/datenschutzerklaerung" target="_blank" style="color: #1D345D; text-decoration: underline;">Datenschutzerklärung</a><span class="checkbox-required">*</span>
             </label>
           </div>
           <div class="checkbox-error" id="termsError">Bitte akzeptieren Sie die AGB und Datenschutzerklärung.</div>
@@ -1428,9 +1502,14 @@
           <div class="checkbox-item">
             <input type="checkbox" id="spamCheckbox" name="spam">
             <label for="spamCheckbox" class="checkbox-label">
-              Ich will habe weitere Spam-Mails und benötige eine Sammel-Upload
+              Ich habe weitere Spam-Mails und benötige einen gesicherten Account für den Sammel-Upload.
             </label>
           </div>
+        </div>
+        
+        <!-- reCAPTCHA -->
+        <div class="recaptcha-container">
+          <div class="g-recaptcha" data-sitekey="6LcV1KArAAAAAOXS9H0f8DZqiJQQNdz-cc_hVmci" data-callback="onRecaptchaSuccess" data-expired-callback="onRecaptchaExpired"></div>
         </div>
         
         <button type="submit" class="submit-btn" id="submitButton" disabled>Anfrage senden</button>
@@ -1500,30 +1579,63 @@
             }
         }
 
-        // Initialize checkboxes when DOM is loaded
+        // Mobile-optimized initialization
+        function initializeMobileOptimizations() {
+            // Check if mobile device
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                // Preload first question elements
+                const question1 = document.getElementById('question1');
+                if (question1) {
+                    // Force hardware acceleration on first question
+                    question1.style.transform = 'translateZ(0)';
+                    question1.style.willChange = 'auto';
+                    
+                    // Optimize radio buttons for touch
+                    const radioLabels = question1.querySelectorAll('.flight-problem-label');
+                    radioLabels.forEach(label => {
+                        label.style.touchAction = 'manipulation';
+                        label.style.userSelect = 'none';
+                    });
+                }
+                
+                // Reduce console logging on mobile for performance
+                console.log = function() {};
+            }
+        }
+
+        // Initialize everything when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
             initializeCheckboxes();
+            initializeMobileOptimizations();
         });
 
-        // BULLETPROOF SELECTION FUNCTION
+        // OPTIMIZED SELECTION FUNCTION
         function selectOption(element, value) {
-            console.log('=== OPTION CLICKED ===');
-            console.log('Current question:', currentQuestion);
-            console.log('Value received:', value);
+            // Immediate visual feedback for first question
+            if (currentQuestion === 1) {
+                element.style.borderColor = '#1D345D';
+                element.style.background = '#fff';
+            }
             
-            // Clear all selections in current container
+            // Clear all selections in current container (optimized)
             const container = element.closest('.question-container');
             const allLabels = container.querySelectorAll('.flight-problem-label');
-            allLabels.forEach(label => {
-                label.classList.remove('selected');
-                const radio = label.querySelector('input[type="radio"]');
-                if (radio) radio.checked = false;
-            });
             
-            // Select this option
-            element.classList.add('selected');
-            const radio = element.querySelector('input[type="radio"]');
-            if (radio) radio.checked = true;
+            // Use requestAnimationFrame for smooth updates
+            requestAnimationFrame(() => {
+                allLabels.forEach(label => {
+                    label.classList.remove('selected');
+                    const radio = label.querySelector('input[type="radio"]');
+                    if (radio) radio.checked = false;
+                });
+                
+                // Select this option
+                element.classList.add('selected');
+                const radio = element.querySelector('input[type="radio"]');
+                if (radio) radio.checked = true;
+            });
             
             // FORCE STORE ANSWER - Multiple methods to ensure it works
             if (currentQuestion === 1) {
@@ -2009,6 +2121,7 @@
     </div>
 </body>
 </html>
+
 
 
 
