@@ -1315,6 +1315,11 @@
             <div class="step-circle" id="step4Circle">4</div>
             <div class="step-label" id="step4Label">E-Mail-Alter</div>
           </div>
+          
+          <div class="progress-step">
+            <div class="step-circle" id="step5Circle">5</div>
+            <div class="step-label" id="step5Label">Service</div>
+          </div>
         </div>
       </div>
     </div>
@@ -1425,8 +1430,39 @@
       </div>
       
       <div class="button-wrapper">
-        <button class="next-button" id="continue4" onclick="showResult()" disabled>Ergebnisse erhalten</button>
+        <button class="next-button" id="continue4" onclick="nextQuestion(5)" disabled>Weiter</button>
         <button class="back-button active" onclick="previousQuestion(3)">Zurück</button>
+      </div>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="question-container" id="question5">
+      <h1 class="main-heading">Welchen Service würden Sie in Anspruch nehmen wollen?</h1>
+      <p class="subtext">Bitte wählen Sie eine Antwort aus. Hinweis: Es entstehen dir hierdruch keine Kosten und es wird noch keine Beauftragung ausgeführt.</p>
+
+      <div class="radio-group">
+        <label class="flight-problem-label" onclick="selectOption(this, '5a')">
+          <input type="radio" name="q5" value="5a">
+          <span class="option-label"></span>
+          <span class="option-text">Ich möchte die Werbemail direkt an Rechto für 29€ verkaufen und mein Geld in 48h nach Annahme erhalten.</span>
+        </label>
+
+        <label class="flight-problem-label" onclick="selectOption(this, '5b')">
+          <input type="radio" name="q5" value="5b">
+          <span class="option-label"></span>
+          <span class="option-text">Ich möchte den längeren Weg gehen und Schadensersatz bis zu 250€ mit Rechto einfordern lassen.</span>
+        </label>
+
+        <label class="flight-problem-label" onclick="selectOption(this, '5c')">
+          <input type="radio" name="q5" value="5c">
+          <span class="option-label"></span>
+          <span class="option-text">Ich weiß es noch nicht. Ich möchte mich dazu von Rechto beraten lassen.</span>
+        </label>
+      </div>
+
+      <div class="button-wrapper">
+        <button class="next-button" id="continue5" onclick="showResult()" disabled>Ergebnisse erhalten</button>
+        <button class="back-button active" onclick="previousQuestion(4)">Zurück</button>
       </div>
     </div>
 
@@ -1650,6 +1686,9 @@
             } else if (currentQuestion === 4) {
                 answers.q4 = value;
                 window.q4Answer = value; // Backup
+            } else if (currentQuestion === 5) {
+                answers.q5 = value;
+                window.q5Answer = value; // Backup
             }
             
             console.log('STORED: answers.q' + currentQuestion + ' = ' + value);
@@ -1680,10 +1719,11 @@
         }
 
         function updateProgress() {
-            const progress = ((currentQuestion - 1) / 3) * 100;
+            const totalSteps = 5;
+            const progress = ((currentQuestion - 1) / (totalSteps - 1)) * 100;
             document.getElementById('progressLineFill').style.width = progress + '%';
             
-            for (let i = 1; i <= 4; i++) {
+            for (let i = 1; i <= totalSteps; i++) {
                 const circle = document.getElementById('step' + i + 'Circle');
                 const label = document.getElementById('step' + i + 'Label');
                 
@@ -1691,16 +1731,16 @@
                     circle.classList.remove('active');
                     circle.classList.add('completed');
                     circle.innerHTML = '✓';
-                    label.classList.remove('active');
+                    if (label) label.classList.remove('active');
                 } else if (i === currentQuestion) {
                     circle.classList.add('active');
                     circle.classList.remove('completed');
                     circle.innerHTML = i;
-                    label.classList.add('active');
+                    if (label) label.classList.add('active');
                 } else {
                     circle.classList.remove('active', 'completed');
                     circle.innerHTML = i;
-                    label.classList.remove('active');
+                    if (label) label.classList.remove('active');
                 }
             }
         }
@@ -1715,12 +1755,14 @@
             
             // Complete progress
             document.getElementById('progressLineFill').style.width = '100%';
-            for (let i = 1; i <= 3; i++) {
+            for (let i = 1; i <= 5; i++) {
                 const circle = document.getElementById('step' + i + 'Circle');
+                if (!circle) continue;
                 circle.classList.remove('active');
                 circle.classList.add('completed');
                 circle.innerHTML = '✓';
-                document.getElementById('step' + i + 'Label').classList.remove('active');
+                const labelEl = document.getElementById('step' + i + 'Label');
+                if (labelEl) labelEl.classList.remove('active');
             }
             
             // Get answers with multiple fallback methods
@@ -2121,7 +2163,6 @@
     </div>
 </body>
 </html>
-
 
 
 
