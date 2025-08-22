@@ -146,7 +146,7 @@
     /* Mobile: Faster progress animation */
     @media (max-width: 768px) {
       .progress-line-fill {
-        transition: width 0.3s ease;
+        transition: none;
       }
     }
 
@@ -282,7 +282,7 @@
       cursor: not-allowed;
       background-color: #ccc;
       color: #888;
-      transition: all 0.3s ease;
+      transition: background-color 0.2s ease, color 0.2s ease;
       font-family: 'Poppins', sans-serif;
       font-weight: 600;
     }
@@ -689,28 +689,26 @@
         -moz-osx-font-smoothing: grayscale;
       }
       
-      /* First Question Specific Optimizations */
-      #question1 .flight-problem-label {
-        transition: border-color 0.15s ease;
+      /* Mobile: reduce animations and effects for all question items */
+      .question-container .flight-problem-label {
+        transition: border-color 0.15s ease, background 0.15s ease;
         transform: none;
-        will-change: border-color;
+        will-change: auto;
+        box-shadow: none;
       }
       
-      #question1 .flight-problem-label:hover {
+      .question-container .flight-problem-label:hover,
+      .question-container .flight-problem-label:active {
         transform: none;
+        transition: none;
         box-shadow: none;
         background: #f8f9fb;
       }
       
-      #question1 .flight-problem-label:active {
-        transform: none;
-        transition: none;
-      }
-      
       /* Optimize radio button rendering */
-      #question1 input[type="radio"] {
-        transition: background-color 0.2s ease;
-        will-change: background-color;
+      .question-container input[type="radio"] {
+        transition: background-color 0.15s ease;
+        will-change: auto;
       }
 
       .flight-form {
@@ -759,6 +757,7 @@
 
       .progress-steps {
         margin-bottom: 12px;
+        will-change: auto;
       }
 
       .step-circle {
@@ -1649,31 +1648,27 @@
 
         // OPTIMIZED SELECTION FUNCTION
         function selectOption(element, value) {
-            // Immediate visual feedback for first question
+            // Avoid style writes on mobile to reduce layout thrash
             if (currentQuestion === 1) {
                 element.style.borderColor = '#1D345D';
                 element.style.background = '#fff';
             }
             
-            // Clear all selections in current container (optimized)
+            // Clear all selections in current container (no RAF for immediate apply)
             const container = element.closest('.question-container');
             const allLabels = container.querySelectorAll('.flight-problem-label');
-            
-            // Use requestAnimationFrame for smooth updates
-            requestAnimationFrame(() => {
-                allLabels.forEach(label => {
-                    label.classList.remove('selected');
-                    const radio = label.querySelector('input[type="radio"]');
-                    if (radio) radio.checked = false;
-                });
-                
-                // Select this option
-                element.classList.add('selected');
-                const radio = element.querySelector('input[type="radio"]');
-                if (radio) radio.checked = true;
+            allLabels.forEach(label => {
+                label.classList.remove('selected');
+                const radio = label.querySelector('input[type="radio"]');
+                if (radio) radio.checked = false;
             });
             
-            // FORCE STORE ANSWER - Multiple methods to ensure it works
+            // Select this option
+            element.classList.add('selected');
+            const radio = element.querySelector('input[type="radio"]');
+            if (radio) radio.checked = true;
+            
+            // Store answer
             if (currentQuestion === 1) {
                 answers.q1 = value;
                 window.q1Answer = value; // Backup
@@ -1690,10 +1685,6 @@
                 answers.q5 = value;
                 window.q5Answer = value; // Backup
             }
-            
-            console.log('STORED: answers.q' + currentQuestion + ' = ' + value);
-            console.log('VERIFY: answers.q1=', answers.q1, 'answers.q2=', answers.q2, 'answers.q3=', answers.q3, 'answers.q4=', answers.q4);
-            console.log('BACKUP: q1=', window.q1Answer, 'q2=', window.q2Answer, 'q3=', window.q3Answer, 'q4=', window.q4Answer);
             
             // Enable button
             const button = container.querySelector('.next-button');
