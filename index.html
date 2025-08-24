@@ -26,6 +26,15 @@
       width: 100%;
       box-sizing: border-box;
     }
+    
+    /* Remove scaling on mobile for performance */
+    @media (max-width: 768px) {
+      .flight-form {
+        transform: none !important;
+        max-width: 100% !important;
+        padding: 0 8px;
+      }
+    }
 
     .top-bar {
       margin-bottom: 24px;
@@ -143,10 +152,37 @@
       width: 0%;
     }
     
-    /* Mobile: Faster progress animation */
+    /* Mobile: Disable heavy animations and effects */
     @media (max-width: 768px) {
       .progress-line-fill {
         transition: none;
+      }
+      
+      .flight-problem-label {
+        transition: border-color 0.1s ease !important;
+        transform: none !important;
+        box-shadow: none !important;
+      }
+      
+      .flight-problem-label:hover {
+        transform: none !important;
+        box-shadow: none !important;
+        background: #f8f9fb !important;
+      }
+      
+      .question-container {
+        animation: none !important;
+      }
+      
+      .question-container.active {
+        animation: none !important;
+      }
+      
+      /* Disable all transforms and heavy effects on mobile */
+      * {
+        transform: none !important;
+        box-shadow: none !important;
+        transition-duration: 0.1s !important;
       }
     }
 
@@ -207,6 +243,16 @@
       box-shadow: 0 4px 16px 0 rgba(29,52,93,0.10);
       transform: scale(1.025);
       z-index: 2;
+    }
+    
+    /* Disable hover effects on touch devices */
+    @media (hover: none) and (pointer: coarse) {
+      .flight-problem-label:hover {
+        transform: none !important;
+        box-shadow: none !important;
+        background: #f8f9fb;
+        border-color: #1D345D;
+      }
     }
 
     .flight-problem-label:not(:last-child) {
@@ -868,7 +914,10 @@
 
     @media (max-width: 480px) {
       * {
-        transition-duration: 0.2s;
+        transition-duration: 0.05s !important;
+        transform: none !important;
+        box-shadow: none !important;
+        will-change: auto !important;
       }
       
       body {
@@ -877,6 +926,9 @@
         margin: 0;
         overflow-x: hidden;
         -webkit-font-smoothing: antialiased;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        -webkit-overflow-scrolling: touch;
       }
 
       .flight-form {
@@ -908,18 +960,24 @@
         transition: border-color 0.2s ease;
       }
       
-      /* First Question Mobile Optimizations */
+      /* First Question Mobile Optimizations - Enhanced */
       #question1 .flight-problem-label {
-        transition: none;
-        transform: none;
+        transition: none !important;
+        transform: none !important;
         will-change: auto;
+        box-shadow: none !important;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
       }
       
       #question1 .flight-problem-label:hover,
-      #question1 .flight-problem-label:active {
-        transform: none;
-        box-shadow: none;
-        transition: border-color 0.1s ease;
+      #question1 .flight-problem-label:active,
+      #question1 .flight-problem-label:focus {
+        transform: none !important;
+        box-shadow: none !important;
+        transition: border-color 0.05s ease;
+        background: #f8f9fb;
       }
       
       .question-container {
@@ -1620,23 +1678,63 @@
             const isMobile = window.innerWidth <= 768;
             
             if (isMobile) {
-                // Preload first question elements
-                const question1 = document.getElementById('question1');
-                if (question1) {
-                    // Force hardware acceleration on first question
-                    question1.style.transform = 'translateZ(0)';
-                    question1.style.willChange = 'auto';
+                console.log('Mobile optimization active');
+                
+                // Disable console logging after this point for performance
+                setTimeout(() => {
+                    console.log = function() {};
+                }, 1000);
+                
+                // Optimize all question labels for mobile
+                const allLabels = document.querySelectorAll('.flight-problem-label');
+                allLabels.forEach((label, index) => {
+                    // Essential mobile optimizations
+                    label.style.touchAction = 'manipulation';
+                    label.style.userSelect = 'none';
+                    label.style.webkitTapHighlightColor = 'transparent';
+                    label.style.webkitTouchCallout = 'none';
                     
-                    // Optimize radio buttons for touch
-                    const radioLabels = question1.querySelectorAll('.flight-problem-label');
-                    radioLabels.forEach(label => {
-                        label.style.touchAction = 'manipulation';
-                        label.style.userSelect = 'none';
-                    });
+                    // Add passive touch event listeners for better performance
+                    label.addEventListener('touchstart', function(e) {
+                        e.stopPropagation();
+                        this.style.backgroundColor = '#e8f4fd';
+                    }, { passive: true });
+                    
+                    label.addEventListener('touchend', function(e) {
+                        e.stopPropagation();
+                        setTimeout(() => {
+                            this.style.backgroundColor = '';
+                        }, 50);
+                    }, { passive: true });
+                    
+                    // Ensure onclick works on mobile
+                    label.addEventListener('touchend', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Get the onclick attribute value and extract the value
+                        const onclickAttr = this.getAttribute('onclick');
+                        if (onclickAttr) {
+                            const match = onclickAttr.match(/'([^']+)'/);
+                            if (match) {
+                                selectOption(this, match[1]);
+                            }
+                        }
+                    }, { passive: false });
+                });
+                
+                // Optimize form scaling for mobile
+                const form = document.querySelector('.flight-form');
+                if (form) {
+                    form.style.transform = 'none';
+                    form.style.maxWidth = '100%';
                 }
                 
-                // Reduce console logging on mobile for performance
-                console.log = function() {};
+                // Force hardware acceleration on progress elements
+                const progressElements = document.querySelectorAll('.progress-line-fill, .step-circle');
+                progressElements.forEach(el => {
+                    el.style.willChange = 'auto';
+                });
             }
         }
 
@@ -1646,16 +1744,18 @@
             initializeMobileOptimizations();
         });
 
-        // OPTIMIZED SELECTION FUNCTION
+        // OPTIMIZED SELECTION FUNCTION - Mobile Enhanced
         function selectOption(element, value) {
-            // Avoid style writes on mobile to reduce layout thrash
-            if (currentQuestion === 1) {
-                element.style.borderColor = '#1D345D';
-                element.style.background = '#fff';
+            console.log('selectOption called:', value, 'currentQuestion:', currentQuestion);
+            
+            // Get container first
+            const container = element.closest('.question-container');
+            if (!container) {
+                console.error('No container found for element');
+                return;
             }
             
-            // Clear all selections in current container (no RAF for immediate apply)
-            const container = element.closest('.question-container');
+            // Clear all selections in current container
             const allLabels = container.querySelectorAll('.flight-problem-label');
             allLabels.forEach(label => {
                 label.classList.remove('selected');
@@ -1666,31 +1766,47 @@
             // Select this option
             element.classList.add('selected');
             const radio = element.querySelector('input[type="radio"]');
-            if (radio) radio.checked = true;
-            
-            // Store answer
-            if (currentQuestion === 1) {
-                answers.q1 = value;
-                window.q1Answer = value; // Backup
-            } else if (currentQuestion === 2) {
-                answers.q2 = value;
-                window.q2Answer = value; // Backup
-            } else if (currentQuestion === 3) {
-                answers.q3 = value;
-                window.q3Answer = value; // Backup
-            } else if (currentQuestion === 4) {
-                answers.q4 = value;
-                window.q4Answer = value; // Backup
-            } else if (currentQuestion === 5) {
-                answers.q5 = value;
-                window.q5Answer = value; // Backup
+            if (radio) {
+                radio.checked = true;
+                console.log('Radio checked:', radio.checked);
             }
             
-            // Enable button
+            // Store answer with enhanced logging
+            console.log('Storing answer for question', currentQuestion, ':', value);
+            if (currentQuestion === 1) {
+                answers.q1 = value;
+                window.q1Answer = value;
+                console.log('Q1 stored:', answers.q1, window.q1Answer);
+            } else if (currentQuestion === 2) {
+                answers.q2 = value;
+                window.q2Answer = value;
+            } else if (currentQuestion === 3) {
+                answers.q3 = value;
+                window.q3Answer = value;
+            } else if (currentQuestion === 4) {
+                answers.q4 = value;
+                window.q4Answer = value;
+            } else if (currentQuestion === 5) {
+                answers.q5 = value;
+                window.q5Answer = value;
+            }
+            
+            // Enable button immediately
             const button = container.querySelector('.next-button');
             if (button) {
                 button.classList.add('active');
                 button.disabled = false;
+                console.log('Button enabled for question', currentQuestion);
+            } else {
+                console.error('No button found in container');
+            }
+            
+            // Mobile-specific: Add brief visual feedback
+            if (window.innerWidth <= 768) {
+                element.style.backgroundColor = '#e8f4fd';
+                setTimeout(() => {
+                    element.style.backgroundColor = '';
+                }, 100);
             }
         }
 
@@ -2154,6 +2270,7 @@
     </div>
 </body>
 </html>
+
 
 
 
